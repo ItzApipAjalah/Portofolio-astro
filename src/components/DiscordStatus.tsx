@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Music, Headphones, Circle, Clock, Wifi, WifiOff } from 'lucide-react';
+import { Activity, Music, Headphones, Circle, Clock, Wifi, WifiOff, Timer } from 'lucide-react';
 import LastFmStatus from './LastFmStatus';
 
 interface DiscordActivity {
@@ -19,6 +19,7 @@ interface DiscordActivity {
     small_text?: string;
   };
   application_id?: string;
+  buttons?: string[];
 }
 
 interface DiscordData {
@@ -64,6 +65,7 @@ export default function DiscordStatus() {
   const wsRef = useRef<WebSocket | null>(null);
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showAllActivities, setShowAllActivities] = useState(false);
 
   // Fallback to REST API if WebSocket fails
   const fetchDiscordDataREST = async () => {
@@ -213,6 +215,51 @@ export default function DiscordStatus() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const getAssetUrl = (assetUrl: string | undefined, applicationId?: string): string => {
+    if (!assetUrl) return '';
+    
+    // Check if the URL contains mp:external
+    if (assetUrl.startsWith('mp:external/')) {
+      // Extract the actual URL after the last forward slash
+      const parts = assetUrl.split('/https/');
+      if (parts.length > 1) {
+        return 'https://' + parts[1];
+      }
+    }
+    
+    // If it's a Discord CDN URL, return as is
+    if (assetUrl.startsWith('https://cdn.discordapp.com/')) {
+      return assetUrl;
+    }
+    
+    // If it's already a full URL, return as is
+    if (assetUrl.startsWith('http://') || assetUrl.startsWith('https://')) {
+      return assetUrl;
+    }
+    
+    // For Discord application assets
+    if (applicationId) {
+      return `https://cdn.discordapp.com/app-assets/${applicationId}/${assetUrl}.png`;
+    }
+
+    return assetUrl;
+  };
+
+  const formatElapsedTime = (startTime: number): string => {
+    const elapsed = Math.floor((currentTime - startTime) / 1000); // Convert to seconds
+    
+    const hours = Math.floor(elapsed / 3600);
+    const minutes = Math.floor((elapsed % 3600) / 60);
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return 'just now';
+    }
+  };
 
   if (isLoading) {
     return (
@@ -413,27 +460,95 @@ export default function DiscordStatus() {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-4"
           >
-            {discordData.activities.map((activity, index) => (
+            {(showAllActivities ? discordData.activities : discordData.activities.slice(0, 1)).map((activity, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center space-x-3"
+                className="flex items-center justify-between space-x-3"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-md">
-                  <Activity className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-3 min-w-0">
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    {activity.assets?.large_image ? (
+                      <img
+                        src={getAssetUrl(activity.assets.large_image, activity.application_id)}
+                        alt={activity.assets.large_text || activity.name}
+                        className="w-12 h-12 rounded-xl object-cover shadow-md"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-md">
+                        <Activity className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                    {activity.assets?.small_image && (
+                      <div className="absolute -bottom-1 -right-1">
+                        <img
+                          src={getAssetUrl(activity.assets.small_image, activity.application_id)}
+                          alt={activity.assets.small_text || ''}
+                          className="w-5 h-5 rounded-full border-2 border-white dark:border-gray-800"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">
+                      {activity.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {activity.details || activity.state || 'Playing'}
+                    </p>
+                    {activity.timestamps?.start && (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <Timer className="w-3 h-3 text-blue-500" />
+                        <p className="text-xs text-blue-500 dark:text-blue-400">
+                          {formatElapsedTime(activity.timestamps.start)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">
-                    {activity.name}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {activity.details || activity.state || 'Playing'}
-                  </p>
-                </div>
+                {activity.buttons && activity.buttons.length > 0 && (
+                  <a
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                    className="text-xs px-2 py-1 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 transition-colors flex-shrink-0"
+                  >
+                    {activity.buttons[0]}
+                  </a>
+                )}
               </motion.div>
             ))}
+
+            {discordData.activities.length > 1 && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => setShowAllActivities(!showAllActivities)}
+                className="w-full mt-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center justify-center gap-2 group"
+              >
+                <motion.div
+                  animate={{ rotate: showAllActivities ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-4 h-4"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </motion.div>
+                {showAllActivities ? 'Show Less' : `Show ${discordData.activities.length - 1} More ${discordData.activities.length - 1 === 1 ? 'Activity' : 'Activities'}`}
+              </motion.button>
+            )}
           </motion.div>
         )}
 
