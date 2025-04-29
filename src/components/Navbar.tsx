@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, User, FolderGit2, MessageSquare } from "lucide-react";
+import { Menu, X, Home, User, FolderGit2, MessageSquare, Users } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { VisitorStatsModal } from "./VisitorStats";
 
 const navItems = [
   { label: "Home", href: "#home", icon: Home },
@@ -14,6 +15,7 @@ export default function Navbar() {
   const [active, setActive] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showVisitorStats, setShowVisitorStats] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -184,8 +186,18 @@ export default function Navbar() {
 
         {/* Theme Toggle - Desktop */}
         <motion.div 
-          className="hidden md:block pointer-events-auto bg-gray-50/80 dark:bg-gray-900/80 rounded-full shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 relative"
+          className="hidden md:flex items-center gap-2 pointer-events-auto bg-gray-50/80 dark:bg-gray-900/80 rounded-full shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 relative"
         >
+          <motion.button
+            onClick={() => setShowVisitorStats(true)}
+            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative group"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title="View Visitor Statistics"
+          >
+            <Users className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+          </motion.button>
+          <div className="w-px h-5 bg-gray-200/50 dark:bg-gray-700/50" />
           <ThemeToggle />
         </motion.div>
 
@@ -228,6 +240,20 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col py-2">
+              {/* Add Visitor Stats button to mobile menu */}
+              <motion.button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setShowVisitorStats(true);
+                }}
+                className="relative px-6 py-3 text-left font-medium transition-colors duration-200 flex items-center gap-3 text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Users className="w-5 h-5 text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400" />
+                <span>Visitor Stats</span>
+              </motion.button>
+
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -262,6 +288,9 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Visitor Stats Modal */}
+      <VisitorStatsModal isOpen={showVisitorStats} onClose={() => setShowVisitorStats(false)} />
     </motion.nav>
   );
 } 

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import VisitorTracker from '../components/VisitorTracker';
 const { content } = Astro.props;
 ---
 
@@ -11,6 +12,7 @@ const { content } = Astro.props;
 		<title>{content.title}</title>
 	</head>
 	<body>
+		<VisitorTracker client:load />
 		<slot />
 	</body>
 </html>
