@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.5",
+    "@astrojs/node": "^9.2.1",
     "@astrojs/react": "^4.2.5",
     "@octokit/rest": "^21.1.1",
     "@radix-ui/react-avatar": "^1.1.7",

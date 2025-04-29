@@ -3,6 +3,23 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Github, Instagram, Linkedin, Mail, Download, ArrowRight, Code, Terminal, Database, ArrowDown, Monitor, Smartphone, Cloud, Layers, Code2, FolderGit2 } from 'lucide-react';
 import DiscordStatus from './DiscordStatus';
 
+interface WakaTimeLanguage {
+  name: string;
+  total_seconds: number;
+  percent: number;
+  digital: string;
+  decimal: string;
+  text: string;
+  hours: number;
+  minutes: number;
+}
+
+interface WakaTimeData {
+  data: {
+    languages: WakaTimeLanguage[];
+  };
+}
+
 const techIcons = [
   { icon: <Code className="w-7 h-7 text-blue-500" />, name: "Code" },
   { icon: <Database className="w-7 h-7 text-purple-500" />, name: "Database" },
@@ -191,6 +208,8 @@ export default function HomeContent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [languages, setLanguages] = useState<WakaTimeLanguage[]>([]);
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
 
   // Add scroll-based animations
   const { scrollYProgress } = useScroll({
@@ -373,6 +392,28 @@ export default function HomeContent() {
         document.head.removeChild(style);
       };
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchWakaTimeData = async () => {
+      try {
+        const response = await fetch('/api/wakatime');
+        const data: WakaTimeData = await response.json();
+        
+        // Sort languages by percentage and take top 7
+        const sortedLanguages = data.data.languages
+          .sort((a, b) => b.percent - a.percent)
+          .slice(0, 7);
+        
+        setLanguages(sortedLanguages);
+      } catch (error) {
+        console.error('Error fetching WakaTime data:', error);
+      } finally {
+        setIsLoadingLanguages(false);
+      }
+    };
+
+    fetchWakaTimeData();
   }, []);
 
   return (
@@ -691,82 +732,59 @@ export default function HomeContent() {
                   <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Programming Languages</h3>
                     <div className="space-y-4">
-                      {/* JavaScript */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">JavaScript</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">24.09%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '24.09%' }}></div>
-                        </div>
-                      </div>
+                      {isLoadingLanguages ? (
+                        // Loading skeleton
+                        Array.from({ length: 7 }).map((_, index) => (
+                          <div key={index} className="animate-pulse">
+                            <div className="flex justify-between mb-1">
+                              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                              <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+                            </div>
+                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                          </div>
+                        ))
+                      ) : (
+                        languages.map((lang) => {
+                          // Define color based on language
+                          const getLanguageColor = (name: string) => {
+                            const colors: { [key: string]: string } = {
+                              JavaScript: 'bg-yellow-500',
+                              TypeScript: 'bg-blue-600',
+                              Python: 'bg-green-500',
+                              Java: 'bg-red-500',
+                              'Blade Template': 'bg-blue-500',
+                              Dart: 'bg-blue-400',
+                              PHP: 'bg-purple-500',
+                              HTML: 'bg-orange-500',
+                              CSS: 'bg-pink-500',
+                              JSON: 'bg-green-400',
+                              Markdown: 'bg-gray-500'
+                            };
+                            return colors[name] || 'bg-gray-500';
+                          };
 
-                      {/* Blade Template */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Blade Template</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">13.63%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-blue-500 h-2 rounded-full" style={{ width: '13.63%' }}></div>
-                        </div>
-                      </div>
-
-                      {/* Dart */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Dart</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">10.90%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-blue-400 h-2 rounded-full" style={{ width: '10.90%' }}></div>
-                        </div>
-                      </div>
-
-                      {/* Java */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Java</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">10.26%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-red-500 h-2 rounded-full" style={{ width: '10.26%' }}></div>
-                        </div>
-                      </div>
-
-                      {/* TypeScript */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">TypeScript</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">8.87%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '8.87%' }}></div>
-                        </div>
-                      </div>
-
-                      {/* PHP */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PHP</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">8.40%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-purple-500 h-2 rounded-full" style={{ width: '8.40%' }}></div>
-                        </div>
-                      </div>
-
-                      {/* Python */}
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Python</span>
-                          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">5.45%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '5.45%' }}></div>
-                        </div>
-                      </div>
+                          return (
+                            <div key={lang.name}>
+                              <div className="flex justify-between mb-1">
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                  {lang.name}
+                                </span>
+                                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                  {lang.percent.toFixed(2)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${lang.percent}%` }}
+                                  transition={{ duration: 1, ease: "easeOut" }}
+                                  className={`h-2 rounded-full ${getLanguageColor(lang.name)}`}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 </div>
