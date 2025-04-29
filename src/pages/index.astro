@@ -1,0 +1,20 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar';
+import HomeContent from '../components/HomeContent';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>My Portfolio</title>
+	</head>
+
+	<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+		<Navbar client:load />
+		<HomeContent client:load />
+	</body>
+</html>
