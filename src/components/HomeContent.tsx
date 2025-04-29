@@ -378,14 +378,14 @@ export default function HomeContent() {
   return (
     <div 
       ref={containerRef}
-      className="h-screen overflow-y-auto relative"
+      className="relative overflow-y-auto"
     >
       {/* Background Elements - Enhanced animations with Parallax */}
       <div 
         className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
         style={{
-          height: '200vh', // Extend beyond viewport
-          transform: `translateY(${-getScrollParallax(0.1)}px)` // Move with scroll
+          height: '200vh',
+          transform: `translateY(${-getScrollParallax(0.1)}px)`
         }}
       >
         {/* Deep background gradient with scroll parallax */}
@@ -482,19 +482,19 @@ export default function HomeContent() {
         </div>
       </div>
 
-      <main className="container mx-auto px-4">
+      <main className="relative">
         <AnimatePresence>
           {/* Hero Section */}
           <motion.section 
             id="home" 
-            className="h-screen flex items-center justify-center"
+            className="min-h-screen flex items-start justify-center pt-20 md:pt-24 pb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
             <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col md:flex-row items-center justify-center gap-12">
+              <div className="flex flex-col-reverse md:flex-row items-center justify-center gap-12">
                 <motion.div 
                   className="w-full md:w-1/2 space-y-8 text-center md:text-left"
                   initial={{ opacity: 0, x: -20 }}
@@ -611,7 +611,7 @@ export default function HomeContent() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="w-full md:w-1/2 flex justify-center"
+                  className="w-full md:w-1/2 flex justify-center order-first md:order-none"
                 >
                   <motion.div 
                     className="relative"
@@ -660,7 +660,7 @@ export default function HomeContent() {
           {/* About Section */}
           <motion.section 
             id="about" 
-            className="py-20 min-h-screen"
+            className="min-h-screen py-20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -681,14 +681,14 @@ export default function HomeContent() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                  <div className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100">
+                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Who Am I?</h3>
                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     I'm a backend-focused developer who loves turning complex logic into elegant solutions. From APIs to databases, I build the engines that keep modern web apps running smoothly.
                     </p>
                   </div>
 
-                  <div className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100">
+                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Programming Languages</h3>
                     <div className="space-y-4">
                       {/* JavaScript */}
@@ -794,23 +794,6 @@ export default function HomeContent() {
                         </div>
                       </div>
 
-                      {/* Previous Experience */}
-                      {/* <div className="flex items-start space-x-4">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center">
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Frontend Developer</h4>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">2020 - 2022</span>
-                          </div>
-                          <p className="text-green-600 dark:text-green-400 mb-1">Digital Solutions Ltd.</p>
-                          <p className="text-gray-600 dark:text-gray-300 text-sm">Developed responsive user interfaces and implemented modern frontend architectures.</p>
-                        </div>
-                      </div> */}
-
                       {/* Internship */}
                       <div className="flex items-start space-x-4">
                         <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
@@ -837,7 +820,7 @@ export default function HomeContent() {
           {/* Projects Section */}
           <motion.section 
             id="projects" 
-            className="py-20 min-h-screen"
+            className="min-h-screen py-20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -991,7 +974,7 @@ export default function HomeContent() {
           {/* Social Media Section */}
           <motion.section 
             id="social" 
-            className="py-20 min-h-screen"
+            className="min-h-screen py-20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}

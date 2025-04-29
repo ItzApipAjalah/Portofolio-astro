@@ -132,12 +132,12 @@ export default function Navbar() {
         stiffness: 100,
         damping: 10
       }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 w-auto z-50"
+      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-40"
     >
       <div className="flex justify-center">
         {/* Desktop Navigation */}
         <motion.div 
-          className="hidden md:flex items-center px-2 py-2 rounded-full bg-white/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-white/30 gap-2"
+          className="hidden md:flex items-center px-2 py-2 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 gap-2"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
@@ -157,7 +157,11 @@ export default function Navbar() {
                 whileTap={{ scale: 0.95 }}
               >
                 <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4" />
+                  <Icon className={`w-4 h-4 ${
+                    active === item.label
+                      ? "text-blue-500 dark:text-blue-400"
+                      : "text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+                  }`} />
                   <span>{item.label}</span>
                 </div>
                 {active === item.label && (
@@ -179,15 +183,15 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <motion.button
-          className="md:hidden p-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-500/10 dark:to-purple-500/10 shadow-xl backdrop-blur-lg border border-white/30"
+          className="md:hidden p-4 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
         >
           {isMobileMenuOpen ? (
-            <X className="w-6 h-6 text-gray-900 dark:text-white" />
+            <X className="w-6 h-6 text-blue-500 dark:text-blue-400" />
           ) : (
-            <Menu className="w-6 h-6 text-gray-900 dark:text-white" />
+            <Menu className="w-6 h-6 text-blue-500 dark:text-blue-400" />
           )}
         </motion.button>
       </div>
@@ -197,11 +201,11 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <motion.div
             ref={mobileMenuRef}
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 right-0 w-56 rounded-2xl bg-white/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-white/30 overflow-hidden"
+            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-hidden"
           >
             <div className="flex flex-col py-2">
               {navItems.map((item) => {
@@ -212,13 +216,17 @@ export default function Navbar() {
                     onClick={() => handleNavigation(item.label, item.href)}
                     className={`relative px-6 py-3 text-left font-medium transition-colors duration-200 flex items-center gap-3 ${
                       active === item.label
-                        ? "text-gray-900 dark:text-white bg-gradient-to-r from-blue-500/10 to-purple-500/10"
-                        : "text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        ? "text-blue-500 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20"
+                        : "text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
                     }`}
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className={`w-5 h-5 ${
+                      active === item.label
+                        ? "text-blue-500 dark:text-blue-400"
+                        : "text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+                    }`} />
                     <span>{item.label}</span>
                     {active === item.label && (
                       <motion.div
