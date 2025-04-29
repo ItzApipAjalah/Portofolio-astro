@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Music, X, BarChart3 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 interface LastFmTrack {
   name: string;
@@ -55,6 +56,19 @@ export default function LastFmStatus() {
   const [showTopArtists, setShowTopArtists] = useState(false);
   const [topArtists, setTopArtists] = useState<LastFmArtist[]>([]);
   const [isLoadingArtists, setIsLoadingArtists] = useState(false);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // Create portal container for modal
+    const container = document.createElement('div');
+    container.setAttribute('id', 'modal-root');
+    document.body.appendChild(container);
+    setPortalContainer(container);
+
+    return () => {
+      document.body.removeChild(container);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchLastFmData = async () => {
@@ -101,6 +115,88 @@ export default function LastFmStatus() {
     }
   }, [showTopArtists]);
 
+  const renderModal = () => {
+    if (!showTopArtists || !portalContainer) return null;
+
+    return createPortal(
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999]"
+          onClick={() => setShowTopArtists(false)}
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[9999] p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Top Artists</h3>
+            <motion.button
+              onClick={() => setShowTopArtists(false)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            </motion.button>
+          </div>
+
+          {isLoadingArtists ? (
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                    <div className="w-24 h-3 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 -mr-2">
+              {topArtists.map((artist, index) => (
+                <a
+                  key={artist.name}
+                  href={artist.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <div className="relative">
+                    <span className="absolute -top-1 -left-1 w-5 h-5 bg-blue-500 rounded-full text-white text-xs flex items-center justify-center">
+                      {index + 1}
+                    </span>
+                    {artist.image.find(img => img.size === 'large')?.['#text'] ? (
+                      <img
+                        src={artist.image.find(img => img.size === 'large')?.['#text']}
+                        alt={artist.name}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                        <Music className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{artist.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{artist.playcount} plays</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>,
+      portalContainer
+    );
+  };
+
   if (isLoading) {
     return (
       <motion.div
@@ -133,11 +229,11 @@ export default function LastFmStatus() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800"
+        className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800 relative overflow-hidden"
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative group">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0 flex-1">
+            <div className="relative group flex-shrink-0">
               {albumArt ? (
                 <motion.img
                   src={albumArt}
@@ -158,9 +254,9 @@ export default function LastFmStatus() {
                 animate={{ opacity: 1 }}
               />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1 min-w-0">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
                 <p className="font-medium text-gray-900 dark:text-white truncate">
                   {track.name}
                 </p>
@@ -175,100 +271,26 @@ export default function LastFmStatus() {
               )}
             </div>
           </div>
-          <motion.button
-            onClick={() => setShowTopArtists(true)}
-            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ml-4 relative group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            title="View Top Artists"
-          >
-            <BarChart3 className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
-            <motion.div
-              className="absolute inset-0 rounded-xl bg-blue-500/10 dark:bg-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity"
-              initial={false}
-              transition={{ duration: 0.2 }}
-            />
-          </motion.button>
+          <div className="flex-shrink-0">
+            <motion.button
+              onClick={() => setShowTopArtists(true)}
+              className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative group"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title="View Top Artists"
+            >
+              <BarChart3 className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+              <motion.div
+                className="absolute inset-0 rounded-xl bg-blue-500/10 dark:bg-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                initial={false}
+                transition={{ duration: 0.2 }}
+              />
+            </motion.button>
+          </div>
         </div>
       </motion.div>
 
-      {/* Top Artists Modal */}
-      <AnimatePresence>
-        {showTopArtists && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-              onClick={() => setShowTopArtists(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl z-50 p-6"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">Top Artists</h3>
-                <button
-                  onClick={() => setShowTopArtists(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-
-              {isLoadingArtists ? (
-                <div className="space-y-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-200 animate-pulse" />
-                      <div className="flex-1 space-y-2">
-                        <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
-                        <div className="w-24 h-3 bg-gray-200 rounded animate-pulse" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                  {topArtists.map((artist, index) => (
-                    <a
-                      key={artist.name}
-                      href={artist.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="relative">
-                        <span className="absolute -top-1 -left-1 w-5 h-5 bg-blue-500 rounded-full text-white text-xs flex items-center justify-center">
-                          {index + 1}
-                        </span>
-                        {artist.image.find(img => img.size === 'large')?.['#text'] ? (
-                          <img
-                            src={artist.image.find(img => img.size === 'large')?.['#text']}
-                            alt={artist.name}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                            <Music className="w-6 h-6 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{artist.name}</p>
-                        <p className="text-sm text-gray-500">{artist.playcount} plays</p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      {renderModal()}
     </>
   );
 } 
