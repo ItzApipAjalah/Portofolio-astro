@@ -681,14 +681,14 @@ export default function HomeContent() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 mx-4 sm:mx-0">
+                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Who Am I?</h3>
                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     I'm a backend-focused developer who loves turning complex logic into elegant solutions. From APIs to databases, I build the engines that keep modern web apps running smoothly.
                     </p>
                   </div>
 
-                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 mx-4 sm:mx-0">
+                  <div className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Programming Languages</h3>
                     <div className="space-y-4">
                       {/* JavaScript */}
@@ -774,7 +774,7 @@ export default function HomeContent() {
                 <div className="space-y-6">
                   <DiscordStatus />
 
-                  <div className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100">
+                  <div className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800 mx-4 sm:mx-0">
                     <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Experience</h3>
                     <div className="space-y-6">
                       {/* Current Experience */}
@@ -999,27 +999,27 @@ export default function HomeContent() {
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800"
                 >
                   <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Get in Touch</h3>
                   <div className="space-y-4">
                     <motion.a
                       href="mailto:amwp@afifmedya.my.id"
-                      className="flex items-center gap-3 text-gray-600 hover:text-blue-600 transition-colors"
+                      className="flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       whileHover={{ x: 5 }}
                     >
                       <Mail className="w-5 h-5" />
                       <span>amwp@afifmedya.my.id</span>
                     </motion.a>
                     <motion.div
-                      className="flex items-center gap-3 text-gray-600"
+                      className="flex items-center gap-3 text-gray-600 dark:text-gray-300"
                       whileHover={{ x: 5 }}
                     >
                       <Code2 className="w-5 h-5" />
                       <span>Backend Developer</span>
                     </motion.div>
                     <motion.div
-                      className="flex items-center gap-3 text-gray-600"
+                      className="flex items-center gap-3 text-gray-600 dark:text-gray-300"
                       whileHover={{ x: 5 }}
                     >
                       <ArrowDown className="w-5 h-5" />
@@ -1033,7 +1033,7 @@ export default function HomeContent() {
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:bg-gray-900/50 dark:border-gray-800"
                 >
                   <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Social Media</h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -1041,43 +1041,43 @@ export default function HomeContent() {
                       href="https://github.com/ItzApipAjalah"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Github className="w-5 h-5" />
-                      <span className="text-sm font-medium">GitHub</span>
+                      <Github className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">GitHub</span>
                     </motion.a>
                     <motion.a
                       href="https://instagram.com/apip01____"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <Instagram className="w-5 h-5 text-pink-500" />
-                      <span className="text-sm font-medium">Instagram</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Instagram</span>
                     </motion.a>
                     <motion.a
                       href="https://www.linkedin.com/in/afif-medya-5ba201267/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <Linkedin className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm font-medium">LinkedIn</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">LinkedIn</span>
                     </motion.a>
                     <motion.a
                       href="mailto:amwp@afifmedya.my.id"
-                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Mail className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm font-medium">Email</span>
+                      <Mail className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</span>
                     </motion.a>
                   </div>
                 </motion.div>
@@ -1097,7 +1097,7 @@ export default function HomeContent() {
                 >
                   <a
                     href="mailto:amwp@afifmedya.my.id"
-                    className="flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-opacity-90 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-gray-900 hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-colors"
                   >
                     <Mail className="w-5 h-5 text-blue-600" />
                     <span className="font-medium bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">

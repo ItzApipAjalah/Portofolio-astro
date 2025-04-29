@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Home, User, FolderGit2, MessageSquare } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const navItems = [
   { label: "Home", href: "#home", icon: Home },
@@ -132,12 +133,12 @@ export default function Navbar() {
         stiffness: 100,
         damping: 10
       }}
-      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-50 pointer-events-none"
+      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-[100] pointer-events-none"
     >
-      <div className="flex justify-center">
+      <div className="flex justify-center items-center gap-2">
         {/* Desktop Navigation */}
         <motion.div 
-          className="hidden md:flex items-center px-2 py-2 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 gap-2 pointer-events-auto"
+          className="hidden md:flex items-center px-2 py-2 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 gap-2 pointer-events-auto relative"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
@@ -181,19 +182,28 @@ export default function Navbar() {
           })}
         </motion.div>
 
-        {/* Mobile Menu Button */}
-        <motion.button
-          className="md:hidden p-4 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 pointer-events-auto"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          whileHover={{ scale: 1.05, rotate: 90 }}
-          whileTap={{ scale: 0.95 }}
+        {/* Theme Toggle - Desktop */}
+        <motion.div 
+          className="hidden md:block pointer-events-auto bg-gray-50/80 dark:bg-gray-900/80 rounded-full shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 relative"
         >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-          ) : (
-            <Menu className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-          )}
-        </motion.button>
+          <ThemeToggle />
+        </motion.div>
+
+        {/* Mobile Menu Button */}
+        <motion.div className="md:hidden flex items-center gap-2 pointer-events-auto">
+          <motion.button
+            className="p-4 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            whileHover={{ scale: 1.05, rotate: 90 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+            ) : (
+              <Menu className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+            )}
+          </motion.button>
+        </motion.div>
       </div>
 
       {/* Mobile Menu */}
@@ -205,8 +215,18 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-hidden pointer-events-auto"
+            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-visible pointer-events-auto"
           >
+            {/* Theme Toggle - Mobile */}
+            <div className="p-2 border-b border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-3 px-4 py-2 text-gray-500 dark:text-gray-400">
+                <div className="relative">
+                  <ThemeToggle />
+                </div>
+                <span className="text-sm font-medium">Change Theme</span>
+              </div>
+            </div>
+
             <div className="flex flex-col py-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
