@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Github, Twitter, Linkedin, Mail, Download, ArrowRight, Code, Terminal, Database, ArrowDown, Monitor, Smartphone, Cloud, Layers, Code2 } from 'lucide-react';
+import { Github, Instagram, Linkedin, Mail, Download, ArrowRight, Code, Terminal, Database, ArrowDown, Monitor, Smartphone, Cloud, Layers, Code2, FolderGit2 } from 'lucide-react';
 import DiscordStatus from './DiscordStatus';
 
 const techIcons = [
@@ -548,8 +548,7 @@ export default function HomeContent() {
                     transition={{ delay: 0.6 }}
                     className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto md:mx-0"
                   >
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit quisque
-                    faucibus ex sapien vitae pellentesque sem placerat in id.
+                    I am a student with a great interest in technology and software development. I am currently learning various programming languages and frameworks . Although I am still in the learning phase, I am enthusiastic about continuously improving my skills.
                   </motion.p>
 
                   <motion.div 
@@ -588,7 +587,7 @@ export default function HomeContent() {
                     <motion.a 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      href="#contact" 
+                      href="mailto:amwp@afifmedya.my.id" 
                       className="group px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                     >
                       <Mail className="w-5 h-5" />
@@ -598,11 +597,11 @@ export default function HomeContent() {
                     <motion.a 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      href="#" 
+                      href="#projects" 
                       className="group px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                     >
-                      <Download className="w-5 h-5" />
-                      Download CV
+                      <FolderGit2 className="w-5 h-5" />
+                      View Projects
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </motion.a>
                   </motion.div>
@@ -787,16 +786,16 @@ export default function HomeContent() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Full Stack Developer</h4>
+                            <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Backend Developer (Freelance)</h4>
                             <span className="text-sm text-gray-500 dark:text-gray-400">2022 - Present</span>
                           </div>
-                          <p className="text-blue-600 dark:text-blue-400 mb-1">Tech Company Inc.</p>
-                          <p className="text-gray-600 dark:text-gray-300 text-sm">Leading development of modern web applications using React, Node.js, and cloud technologies.</p>
+                          <p className="text-blue-600 dark:text-blue-400 mb-1">Projects.co.id</p>
+                          <p className="text-gray-600 dark:text-gray-300 text-sm">Developed and maintained server-side applications for various clients using technologies like Node.js and Laravel.</p>
                         </div>
                       </div>
 
                       {/* Previous Experience */}
-                      <div className="flex items-start space-x-4">
+                      {/* <div className="flex items-start space-x-4">
                         <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center">
                           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -810,7 +809,7 @@ export default function HomeContent() {
                           <p className="text-green-600 dark:text-green-400 mb-1">Digital Solutions Ltd.</p>
                           <p className="text-gray-600 dark:text-gray-300 text-sm">Developed responsive user interfaces and implemented modern frontend architectures.</p>
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Internship */}
                       <div className="flex items-start space-x-4">
@@ -822,10 +821,10 @@ export default function HomeContent() {
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Web Development Intern</h4>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">2019 - 2020</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">2024</span>
                           </div>
-                          <p className="text-yellow-600 dark:text-yellow-400 mb-1">Startup Ventures</p>
-                          <p className="text-gray-600 dark:text-gray-300 text-sm">Gained hands-on experience in web development and contributed to various client projects.</p>
+                          <p className="text-yellow-600 dark:text-yellow-400 mb-1">Sada Technology</p>
+                          <p className="text-gray-600 dark:text-gray-300 text-sm">Focused on learning modern web development practices, including backend fundamentals, version control with Git, and collaborative workflows.</p>
                         </div>
                       </div>
                     </div>
@@ -1022,19 +1021,19 @@ export default function HomeContent() {
                   <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Get in Touch</h3>
                   <div className="space-y-4">
                     <motion.a
-                      href="mailto:your.email@example.com"
+                      href="mailto:amwp@afifmedya.my.id"
                       className="flex items-center gap-3 text-gray-600 hover:text-blue-600 transition-colors"
                       whileHover={{ x: 5 }}
                     >
                       <Mail className="w-5 h-5" />
-                      <span>your.email@example.com</span>
+                      <span>amwp@afifmedya.my.id</span>
                     </motion.a>
                     <motion.div
                       className="flex items-center gap-3 text-gray-600"
                       whileHover={{ x: 5 }}
                     >
                       <Code2 className="w-5 h-5" />
-                      <span>Full Stack Developer</span>
+                      <span>Backend Developer</span>
                     </motion.div>
                     <motion.div
                       className="flex items-center gap-3 text-gray-600"
@@ -1056,7 +1055,7 @@ export default function HomeContent() {
                   <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Social Media</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <motion.a
-                      href="https://github.com/yourusername"
+                      href="https://github.com/ItzApipAjalah"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -1067,18 +1066,18 @@ export default function HomeContent() {
                       <span className="text-sm font-medium">GitHub</span>
                     </motion.a>
                     <motion.a
-                      href="https://twitter.com/yourusername"
+                      href="https://instagram.com/apip01____"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Twitter className="w-5 h-5 text-blue-400" />
-                      <span className="text-sm font-medium">Twitter</span>
+                      <Instagram className="w-5 h-5 text-pink-500" />
+                      <span className="text-sm font-medium">Instagram</span>
                     </motion.a>
                     <motion.a
-                      href="https://linkedin.com/in/yourusername"
+                      href="https://www.linkedin.com/in/afif-medya-5ba201267/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -1089,7 +1088,7 @@ export default function HomeContent() {
                       <span className="text-sm font-medium">LinkedIn</span>
                     </motion.a>
                     <motion.a
-                      href="mailto:your.email@example.com"
+                      href="mailto:amwp@afifmedya.my.id"
                       className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -1114,7 +1113,7 @@ export default function HomeContent() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <a
-                    href="mailto:your.email@example.com"
+                    href="mailto:amwp@afifmedya.my.id"
                     className="flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-opacity-90 transition-colors"
                   >
                     <Mail className="w-5 h-5 text-blue-600" />
