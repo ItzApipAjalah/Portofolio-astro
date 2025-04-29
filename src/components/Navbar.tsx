@@ -132,12 +132,12 @@ export default function Navbar() {
         stiffness: 100,
         damping: 10
       }}
-      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-40"
+      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-50 pointer-events-none"
     >
       <div className="flex justify-center">
         {/* Desktop Navigation */}
         <motion.div 
-          className="hidden md:flex items-center px-2 py-2 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 gap-2"
+          className="hidden md:flex items-center px-2 py-2 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 gap-2 pointer-events-auto"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
@@ -183,7 +183,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <motion.button
-          className="md:hidden p-4 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30"
+          className="md:hidden p-4 rounded-full bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 pointer-events-auto"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
@@ -205,7 +205,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-hidden"
+            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-hidden pointer-events-auto"
           >
             <div className="flex flex-col py-2">
               {navItems.map((item) => {
