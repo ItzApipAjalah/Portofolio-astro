@@ -643,7 +643,7 @@ export default function HomeContent() {
                       }}
                     />
                     <motion.img 
-                      src="https://www.afifmedya.my.id/_next/image?url=https%3A%2F%2Fapi.lanyard.rest%2F481734993622728715.png&w=256&q=75" 
+                      src="https://cdn.discordapp.com/avatars/481734993622728715/a_0d4f15d9ef99b880bd26bc553ce6fe44" 
                       alt="Profile Picture" 
                       className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full object-cover border-4 border-white shadow-2xl hover:shadow-3xl transition-all duration-300"
                       whileHover={{ 
