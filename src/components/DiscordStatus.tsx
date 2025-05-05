@@ -66,6 +66,7 @@ export default function DiscordStatus() {
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showAllActivities, setShowAllActivities] = useState(false);
+  const [showActivitiesInsteadOfSpotify, setShowActivitiesInsteadOfSpotify] = useState(false);
 
   // Fallback to REST API if WebSocket fails
   const fetchDiscordDataREST = async () => {
@@ -352,6 +353,11 @@ export default function DiscordStatus() {
     return end - start;
   };
 
+  // Filter out Spotify from activities
+  const nonSpotifyActivities = discordData?.activities?.filter(
+    (activity) => !(activity.name === "Spotify" && activity.type === 2)
+  ) || [];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -393,7 +399,8 @@ export default function DiscordStatus() {
       </div>
 
       <AnimatePresence mode="wait">
-        {discordData.listening_to_spotify && discordData.spotify && (
+        {/* Show Spotify if listening, unless toggled to show activities */}
+        {discordData.listening_to_spotify && discordData.spotify && !showActivitiesInsteadOfSpotify && (
           <motion.div
             key="spotify"
             initial={{ opacity: 0, y: 10 }}
@@ -405,7 +412,6 @@ export default function DiscordStatus() {
               <Headphones className="w-4 h-4" />
               <span>Listening to Spotify</span>
             </div>
-            
             <div className="flex space-x-4">
               <motion.img
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -427,7 +433,6 @@ export default function DiscordStatus() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {discordData.spotify.album}
                 </p>
-                
                 <div className="mt-2 space-y-1">
                   <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>{formatDuration(currentTime - discordData.spotify.timestamps.start)}</span>
@@ -449,10 +454,25 @@ export default function DiscordStatus() {
                 </div>
               </div>
             </div>
+            {/* Show 'View Other Activity' button if there are non-Spotify activities */}
+            {nonSpotifyActivities.length > 0 && (
+              <motion.button
+                onClick={() => setShowActivitiesInsteadOfSpotify(true)}
+                className="w-full mt-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center justify-center gap-2 group"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Activity className="w-4 h-4" />
+                View Other Activity
+              </motion.button>
+            )}
           </motion.div>
         )}
 
-        {!discordData.listening_to_spotify && discordData.activities && discordData.activities.length > 0 && (
+        {/* Show activities if toggled from Spotify, or if not listening to Spotify */}
+        {((discordData.listening_to_spotify && showActivitiesInsteadOfSpotify) || (!discordData.listening_to_spotify && nonSpotifyActivities.length > 0)) && (
           <motion.div
             key="activities"
             initial={{ opacity: 0, y: 10 }}
@@ -460,7 +480,7 @@ export default function DiscordStatus() {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-4"
           >
-            {(showAllActivities ? discordData.activities : discordData.activities.slice(0, 1)).map((activity, index) => (
+            {(showAllActivities ? nonSpotifyActivities : nonSpotifyActivities.slice(0, 1)).map((activity, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
@@ -520,7 +540,7 @@ export default function DiscordStatus() {
               </motion.div>
             ))}
 
-            {discordData.activities.length > 1 && (
+            {nonSpotifyActivities.length > 1 && (
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -546,7 +566,21 @@ export default function DiscordStatus() {
                     />
                   </svg>
                 </motion.div>
-                {showAllActivities ? 'Show Less' : `Show ${discordData.activities.length - 1} More ${discordData.activities.length - 1 === 1 ? 'Activity' : 'Activities'}`}
+                {showAllActivities ? 'Show Less' : `Show ${nonSpotifyActivities.length - 1} More ${nonSpotifyActivities.length - 1 === 1 ? 'Activity' : 'Activities'}`}
+              </motion.button>
+            )}
+            {/* If toggled from Spotify, show a button to go back */}
+            {discordData.listening_to_spotify && (
+              <motion.button
+                onClick={() => setShowActivitiesInsteadOfSpotify(false)}
+                className="w-full mt-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center justify-center gap-2 group"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Headphones className="w-4 h-4" />
+                Back to Spotify
               </motion.button>
             )}
           </motion.div>
