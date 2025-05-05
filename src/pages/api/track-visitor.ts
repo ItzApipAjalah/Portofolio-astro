@@ -35,13 +35,12 @@ function isValidIP(ip: string): boolean {
 function getClientIP(headers: Headers): string {
   // Priority order of headers
   const ipHeaders = [
+    'x-forwarded-for', // Always check this first for proxies
     'x-client-ip',
-    'x-forwarded-for',
     'cf-connecting-ip',
     'x-real-ip',
     'x-forwarded',
     'x-cluster-client-ip',
-    'x-forwarded-for',
     'forwarded-for',
     'forwarded',
     'remote-addr'
@@ -50,14 +49,20 @@ function getClientIP(headers: Headers): string {
   for (const header of ipHeaders) {
     const value = headers.get(header);
     if (value) {
-      // Handle comma-separated IPs (take the first one)
-      const ip = value.split(',')[0].trim();
-      if (isValidIP(ip)) {
-        return ip;
+      // x-forwarded-for can be a comma-separated list
+      const ips = value.split(',').map(ip => ip.trim());
+      for (const ip of ips) {
+        if (isValidIP(ip)) {
+          return ip;
+        }
       }
     }
   }
 
+  // If no valid IP found, log a warning
+  console.warn('[Visitor Tracking] No valid IP found in headers, falling back to 127.0.0.1', {
+    headers: Object.fromEntries([...headers.entries()])
+  });
   return '127.0.0.1';
 }
 

@@ -203,6 +203,23 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
 
+function getRandomSpam(length = 8) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=~';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+const spamTitles = [
+  "👀 Come back!",
+  "😱 Don't leave!",
+  "😂 LOL!",
+  "🥺 Please return!",
+  "🤖 Beep boop!",
+];
+
 export default function HomeContent() {
   const typewriter = useTypewriter(typewriterWords);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -414,6 +431,32 @@ export default function HomeContent() {
     };
 
     fetchWakaTimeData();
+  }, []);
+
+  // Funny spammy title on tab blur, with interval spam after |
+  useEffect(() => {
+    const originalTitle = document.title;
+    let interval: ReturnType<typeof setInterval> | null = null;
+    function setSpamTitle() {
+      const base = spamTitles[Math.floor(Math.random() * spamTitles.length)];
+      const spam = getRandomSpam(8 + Math.floor(Math.random() * 8));
+      document.title = `${base} | ${spam}`;
+    }
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        setSpamTitle();
+        interval = setInterval(setSpamTitle, 1);
+      } else {
+        if (interval) clearInterval(interval);
+        document.title = originalTitle;
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (interval) clearInterval(interval);
+      document.title = originalTitle;
+    };
   }, []);
 
   return (
