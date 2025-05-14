@@ -27,6 +27,17 @@ interface DiscordData {
     username: string;
     avatar: string;
     global_name: string;
+    clan?: {
+      tag: string;
+      identity_guild_id: string;
+      badge: string;
+      identity_enabled: boolean;
+    };
+    avatar_decoration_data?: {
+      sku_id: string;
+      asset: string;
+      expires_at: string | null;
+    };
   };
   activities: DiscordActivity[];
   discord_status: string;
@@ -367,18 +378,42 @@ export default function DiscordStatus() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <img
-              src={`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${discordData.discord_user.avatar}`}
-              alt={discordData.discord_user.username}
-              className="w-12 h-12 rounded-full border-2 border-white/20 dark:border-gray-700"
-            />
+            <div className="relative">
+              <img
+                src={`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${discordData.discord_user.avatar}`}
+                alt={discordData.discord_user.username}
+                className="w-12 h-12 rounded-full border-2 border-white/20 dark:border-gray-700"
+              />
+              {discordData.discord_user.avatar_decoration_data && (
+                <img
+                  src={`https://cdn.discordapp.com/avatar-decoration-presets/${discordData.discord_user.avatar_decoration_data.asset}.png`}
+                  alt="Avatar decoration"
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                />
+              )}
+            </div>
             <div 
               className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${getStatusColor(discordData.discord_status)}`} 
             />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               {discordData.discord_user.global_name || discordData.discord_user.username}
+              {discordData.discord_user.clan && (
+                <div className="relative group">
+                  <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 dark:border-blue-500/10 shadow-sm">
+                    <img
+                      src={`https://cdn.discordapp.com/clan-badges/${discordData.discord_user.clan.identity_guild_id}/${discordData.discord_user.clan.badge}.png?size=16`}
+                      alt={`${discordData.discord_user.clan.tag} badge`}
+                      className="w-4 h-4 rounded-sm"
+                    />
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                      {discordData.discord_user.clan.tag}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-md blur-sm group-hover:blur-md transition-all -z-10" />
+                </div>
+              )}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {discordData.discord_status.charAt(0).toUpperCase() + discordData.discord_status.slice(1)}
