@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, User, FolderGit2, MessageSquare, Users } from "lucide-react";
+import { Menu, X, Home, User, FolderGit2, MessageSquare, Users, ArrowLeft } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { VisitorStatsModal } from "./VisitorStats";
 
@@ -16,83 +16,89 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showVisitorStats, setShowVisitorStats] = useState(false);
+  const [isDownloadPage, setIsDownloadPage] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Create intersection observer with more sensitive settings
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sectionId = entry.target.id;
-            const matchingItem = navItems.find(item => item.href === `#${sectionId}`);
-            if (matchingItem) {
-              setActive(matchingItem.label);
-              // Update URL hash without scrolling
-              if (window.location.hash !== `#${sectionId}`) {
-                window.history.replaceState(null, '', `#${sectionId}`);
+    // Check if we're on the download page
+    setIsDownloadPage(window.location.pathname === '/download-office-activator');
+
+    if (!isDownloadPage) {
+      // Create intersection observer with more sensitive settings
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const sectionId = entry.target.id;
+              const matchingItem = navItems.find(item => item.href === `#${sectionId}`);
+              if (matchingItem) {
+                setActive(matchingItem.label);
+                // Update URL hash without scrolling
+                if (window.location.hash !== `#${sectionId}`) {
+                  window.history.replaceState(null, '', `#${sectionId}`);
+                }
               }
             }
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '-30% 0px -30% 0px', // More sensitive margin
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] // Multiple thresholds
-      }
-    );
-
-    // Observe all sections
-    navItems.forEach(item => {
-      const section = document.getElementById(item.href.slice(1));
-      if (section) {
-        observerRef.current?.observe(section);
-      }
-    });
-
-    // Add scroll event listener as fallback
-    const handleScroll = () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-
-      scrollTimeoutRef.current = setTimeout(() => {
-        const sections = navItems.map(item => ({
-          element: document.getElementById(item.href.slice(1)),
-          href: item.href,
-          label: item.label
-        })).filter(section => section.element);
-
-        const currentSection = sections.find(section => {
-          const rect = section.element?.getBoundingClientRect();
-          return rect && rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
-        });
-
-        if (currentSection) {
-          setActive(currentSection.label);
-          if (window.location.hash !== currentSection.href) {
-            window.history.replaceState(null, '', currentSection.href);
-          }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '-30% 0px -30% 0px', // More sensitive margin
+          threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] // Multiple thresholds
         }
-      }, 100); // Debounce scroll events
-    };
+      );
 
-    window.addEventListener('scroll', handleScroll);
+      // Observe all sections
+      navItems.forEach(item => {
+        const section = document.getElementById(item.href.slice(1));
+        if (section) {
+          observerRef.current?.observe(section);
+        }
+      });
 
-    // Cleanup
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+      // Add scroll event listener as fallback
+      const handleScroll = () => {
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+
+        scrollTimeoutRef.current = setTimeout(() => {
+          const sections = navItems.map(item => ({
+            element: document.getElementById(item.href.slice(1)),
+            href: item.href,
+            label: item.label
+          })).filter(section => section.element);
+
+          const currentSection = sections.find(section => {
+            const rect = section.element?.getBoundingClientRect();
+            return rect && rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
+          });
+
+          if (currentSection) {
+            setActive(currentSection.label);
+            if (window.location.hash !== currentSection.href) {
+              window.history.replaceState(null, '', currentSection.href);
+            }
+          }
+        }, 100); // Debounce scroll events
+      };
+
+      window.addEventListener('scroll', handleScroll);
+
+      // Cleanup
+      return () => {
+        if (observerRef.current) {
+          observerRef.current.disconnect();
+        }
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isDownloadPage]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -124,6 +130,106 @@ export default function Navbar() {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (isDownloadPage) {
+    return (
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ 
+          duration: 0.5,
+          type: "spring",
+          stiffness: 100,
+          damping: 10
+        }}
+        className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-[100] pointer-events-none"
+      >
+        <div className="flex justify-center items-center gap-2">
+          {/* Back to Home Button */}
+          <motion.div 
+            className="flex items-center px-2 py-2 rounded-full bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-500/5 dark:via-purple-500/5 dark:to-pink-500/5 shadow-xl backdrop-blur-lg border border-white/20 dark:border-gray-700/30 gap-2 pointer-events-auto relative overflow-hidden group"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {/* Animated background gradient */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 dark:from-blue-500/10 dark:via-purple-500/10 dark:to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              animate={{
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: 'linear'
+              }}
+              style={{
+                backgroundSize: '200% 200%',
+              }}
+            />
+            
+            {/* Shimmer effect */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: 'linear',
+                repeatDelay: 0.5
+              }}
+            />
+
+            <motion.a
+              href="/"
+              className="relative px-6 py-2.5 rounded-full font-medium transition-all duration-300 focus:outline-none flex items-center gap-3 group-hover:gap-4"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div
+                className="relative"
+                animate={{
+                  x: [0, -4, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <ArrowLeft className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                <motion.div
+                  className="absolute inset-0 bg-blue-500/20 dark:bg-blue-400/20 rounded-full blur-md"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 0.8, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              </motion.div>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 font-semibold">
+                Back to Home
+              </span>
+            </motion.a>
+          </motion.div>
+
+          {/* Theme Toggle */}
+          <motion.div 
+            className="flex items-center gap-2 pointer-events-auto bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-500/5 dark:via-purple-500/5 dark:to-pink-500/5 rounded-full shadow-xl backdrop-blur-lg border border-white/20 dark:border-gray-700/30 relative overflow-hidden"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <ThemeToggle />
+          </motion.div>
+        </div>
+      </motion.nav>
+    );
+  }
 
   return (
     <motion.nav
