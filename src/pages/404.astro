@@ -1,0 +1,348 @@
+---
+import '../styles/global.css';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>404 - Page Not Found</title>
+		<style>
+			@keyframes float {
+				0%, 100% {
+					transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+				}
+				25% {
+					transform: translateY(-15px) translateX(15px) rotate(5deg) scale(1.05);
+				}
+				50% {
+					transform: translateY(0) translateX(30px) rotate(0deg) scale(1);
+				}
+				75% {
+					transform: translateY(15px) translateX(15px) rotate(-5deg) scale(0.95);
+				}
+			}
+
+			@keyframes glow {
+				0%, 100% {
+					filter: blur(8px) brightness(1);
+					transform: scale(1) rotate(0deg);
+				}
+				50% {
+					filter: blur(12px) brightness(1.3);
+					transform: scale(1.1) rotate(5deg);
+				}
+			}
+
+			@keyframes gradient-shift {
+				0% {
+					background-position: 0% 50%;
+					transform: scale(1);
+				}
+				50% {
+					background-position: 100% 50%;
+					transform: scale(1.05);
+				}
+				100% {
+					background-position: 0% 50%;
+					transform: scale(1);
+				}
+			}
+
+			@keyframes noise {
+				0% {
+					background-position: 0 0;
+					opacity: 0.02;
+				}
+				50% {
+					opacity: 0.03;
+				}
+				100% {
+					background-position: 100% 100%;
+					opacity: 0.02;
+				}
+			}
+
+			@keyframes pulse {
+				0%, 100% {
+					transform: scale(1);
+					opacity: 0.5;
+				}
+				50% {
+					transform: scale(1.2);
+					opacity: 0.8;
+				}
+			}
+
+			.animate-float {
+				animation: float 20s ease-in-out infinite;
+			}
+
+			.animate-glow {
+				animation: glow 3s ease-in-out infinite;
+			}
+
+			.animate-gradient-shift {
+				background-size: 400% 400%;
+				animation: gradient-shift 15s ease infinite;
+			}
+
+			.animate-noise {
+				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+				animation: noise 0.2s steps(8) infinite;
+			}
+
+			.animate-pulse {
+				animation: pulse 4s ease-in-out infinite;
+			}
+
+			.glass-effect {
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+			}
+
+			.dark .glass-effect {
+				background: rgba(0, 0, 0, 0.2);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+			}
+
+			.text-shadow {
+				text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+			}
+
+			.dark .text-shadow {
+				text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+			}
+
+			.hover-lift {
+				transition: transform 0.3s ease, box-shadow 0.3s ease;
+			}
+
+			.hover-lift:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+			}
+
+			.theme-toggle {
+				position: fixed;
+				top: 1rem;
+				right: 1rem;
+				z-index: 50;
+				padding: 0.5rem;
+				border-radius: 0.5rem;
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				transition: all 0.3s ease;
+			}
+
+			.theme-toggle:hover {
+				transform: scale(1.1);
+				background: rgba(255, 255, 255, 0.2);
+			}
+
+			.dark .theme-toggle {
+				background: rgba(0, 0, 0, 0.2);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+			}
+
+			.dark .theme-toggle:hover {
+				background: rgba(0, 0, 0, 0.3);
+			}
+		</style>
+	</head>
+	<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+		{/* Theme Toggle Button */}
+		<button
+			id="theme-toggle"
+			class="theme-toggle"
+			aria-label="Toggle theme"
+		>
+			<svg
+				class="w-6 h-6 text-gray-800 dark:text-gray-200"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+				></path>
+			</svg>
+		</button>
+
+		{/* Background Elements */}
+		<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+			{/* Deep background gradient with animation */}
+			<div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-purple-50 dark:from-slate-800 dark:via-blue-900/20 dark:to-purple-900/20 animate-gradient-shift" />
+			
+			{/* Animated noise texture */}
+			<div class="absolute inset-0 opacity-[0.02] animate-noise" />
+			
+			{/* Grid pattern */}
+			<div class="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:24px_24px]" />
+			
+			{/* Glowing orbs with enhanced effects */}
+			<div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-blue-400/20 blur-3xl animate-float" />
+			<div class="absolute bottom-1/4 right-1/3 w-40 h-40 rounded-full bg-purple-400/20 blur-3xl animate-float" style="animation-delay: -7s;" />
+			<div class="absolute top-1/3 right-1/4 w-36 h-36 rounded-full bg-pink-400/20 blur-3xl animate-float" style="animation-delay: -14s;" />
+			
+			{/* Additional floating elements */}
+			<div class="absolute top-1/2 left-1/3 w-24 h-24 rounded-full bg-cyan-400/10 blur-2xl animate-float" style="animation-delay: -5s;" />
+			<div class="absolute bottom-1/3 left-1/4 w-28 h-28 rounded-full bg-yellow-400/10 blur-2xl animate-float" style="animation-delay: -10s;" />
+			<div class="absolute top-1/4 right-1/4 w-20 h-20 rounded-full bg-green-400/10 blur-2xl animate-float" style="animation-delay: -12s;" />
+			<div class="absolute bottom-1/2 right-1/3 w-32 h-32 rounded-full bg-indigo-400/10 blur-2xl animate-float" style="animation-delay: -8s;" />
+		</div>
+
+		<main class="min-h-screen flex items-center justify-center px-4">
+			<div class="text-center space-y-8 relative">
+				{/* 404 Number with Enhanced Glow Effect */}
+				<div class="relative">
+					<div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-glow" />
+					<h1 class="text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative text-shadow hover-lift">
+						404
+					</h1>
+				</div>
+
+				{/* Error Message with Glass Effect */}
+				<div class="glass-effect rounded-2xl p-8 space-y-4 transform hover:scale-105 transition-transform duration-300 hover-lift">
+					<h2 class="text-3xl font-bold text-gray-800 dark:text-white text-shadow">
+						Oops! Page Not Found
+					</h2>
+					<p class="text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+						The page you're looking for seems to have vanished into the digital void. Let's get you back on track!
+					</p>
+					<div class="mt-6 space-y-3">
+						<div class="glass-effect px-4 py-3 rounded-lg">
+							<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+									<path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+								</svg>
+								<span>Current URL:</span>
+							</div>
+							<div class="mt-1 font-mono text-sm bg-gray-100 dark:bg-gray-800/50 px-3 py-2 rounded-md overflow-x-auto">
+								<span class="text-gray-400 dark:text-gray-500">https://</span>
+								<span class="text-blue-600 dark:text-blue-400" id="current-host"></span>
+								<span class="text-purple-600 dark:text-purple-400" id="current-path"></span>
+							</div>
+						</div>
+						<div class="glass-effect px-4 py-3 rounded-lg">
+							<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+								</svg>
+								<span>Your Local Time:</span>
+							</div>
+							<div class="mt-1 font-mono text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+								<span id="current-time" class="text-blue-600 dark:text-blue-400"></span>
+								<span class="text-gray-400 dark:text-gray-500">•</span>
+								<span id="current-date" class="text-purple-600 dark:text-purple-400"></span>
+							</div>
+							<div class="mt-2 text-xs text-gray-400 dark:text-gray-500 italic">
+								Based on your system clock
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Back to Home Button with Enhanced Effects */}
+				<div class="flex justify-center">
+					<a 
+						href="/"
+						class="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 transform hover:scale-105 duration-300 hover-lift"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:-translate-x-2 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+						</svg>
+						<span class="text-lg font-medium">Back to Home</span>
+					</a>
+				</div>
+
+				{/* Decorative Elements with Enhanced Effects */}
+				<div class="relative mt-12">
+					<div class="absolute inset-0 flex items-center justify-center">
+						<div class="w-64 h-1 bg-gradient-to-r from-transparent via-blue-400/40 to-transparent animate-glow" />
+					</div>
+					<div class="relative text-sm text-gray-500 dark:text-gray-400 glass-effect px-6 py-3 rounded-full inline-block hover-lift">
+						Lost in the digital realm? Let's get you back!
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<script>
+			// Theme toggle functionality
+			const themeToggle = document.getElementById('theme-toggle');
+			const html = document.documentElement;
+			
+			// Check for saved theme preference
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				html.classList.add('dark');
+			}
+
+			// Toggle theme
+			if (themeToggle) {
+				themeToggle.addEventListener('click', () => {
+					html.classList.toggle('dark');
+					localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+				});
+			}
+
+			// Display current URL information
+			const currentPath = document.getElementById('current-path');
+			const currentHost = document.getElementById('current-host');
+
+			if (currentPath && currentHost) {
+				currentPath.textContent = window.location.pathname;
+				currentHost.textContent = window.location.host;
+			}
+
+			// Update time display
+			function updateTime() {
+				const now = new Date();
+				const timeElement = document.getElementById('current-time');
+				const dateElement = document.getElementById('current-date');
+				
+				if (timeElement && dateElement) {
+					// Format time with leading zeros
+					const hours = String(now.getHours()).padStart(2, '0');
+					const minutes = String(now.getMinutes()).padStart(2, '0');
+					const seconds = String(now.getSeconds()).padStart(2, '0');
+					timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+					
+					// Format date
+					const options: Intl.DateTimeFormatOptions = { 
+						weekday: 'long', 
+						year: 'numeric', 
+						month: 'long', 
+						day: 'numeric' 
+					};
+					dateElement.textContent = now.toLocaleDateString(undefined, options);
+				}
+			}
+
+			// Update time immediately and then every second
+			updateTime();
+			setInterval(updateTime, 1000);
+
+			// Add mouse movement parallax effect
+			document.addEventListener('mousemove', (e) => {
+				const mouseX = (e.clientX / window.innerWidth - 0.5) * 20;
+				const mouseY = (e.clientY / window.innerHeight - 0.5) * 20;
+				
+				document.querySelectorAll('.animate-float').forEach(el => {
+					if (el instanceof HTMLElement) {
+						el.style.transform = `translate(${mouseX * 0.05}px, ${mouseY * 0.05}px)`;
+					}
+				});
+			});
+		</script>
+	</body>
+</html> 
