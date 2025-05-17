@@ -727,7 +727,7 @@ export default function HomeContent() {
                       }}
                     />
                     <motion.img 
-                      src="https://cdn.discordapp.com/avatars/481734993622728715/a_0d4f15d9ef99b880bd26bc553ce6fe44" 
+                      src="/profile.png" 
                       alt="Profile Picture" 
                       className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full object-cover border-4 border-white shadow-2xl hover:shadow-3xl transition-all duration-300"
                       whileHover={{ 
