@@ -2,11 +2,11 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ request }) => {
   try {
-    // Set headers for file download
+    // Redirect to Google Drive direct download
     return new Response(null, {
       status: 302,
       headers: {
-        'Location': '/downloads/Office_Activator.zip',
+        'Location': 'https://drive.google.com/uc?export=download&id=1d2nztTjFlZzXIQ19Kp6crvAYgFNj7UcY',
         'Content-Disposition': 'attachment; filename="Office_Activator.zip"'
       }
     });
