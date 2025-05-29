@@ -79,6 +79,35 @@ export default function DiscordStatus() {
   const [showAllActivities, setShowAllActivities] = useState(false);
   const [showActivitiesInsteadOfSpotify, setShowActivitiesInsteadOfSpotify] = useState(false);
 
+  // Add event emitter for Spotify track
+  useEffect(() => {
+    if (discordData?.listening_to_spotify && discordData.spotify) {
+      console.log('Emitting Spotify track change:', discordData.spotify); // Debug log
+      const spotifyEvent = new CustomEvent('spotify-track-change', {
+        detail: {
+          song: discordData.spotify.song || '',
+          artist: discordData.spotify.artist || '',
+          album: discordData.spotify.album || '',
+          albumArt: discordData.spotify.album_art_url || '',
+          isPlaying: true
+        }
+      });
+      window.dispatchEvent(spotifyEvent);
+    } else {
+      console.log('Emitting Spotify stop event'); // Debug log
+      const spotifyEvent = new CustomEvent('spotify-track-change', {
+        detail: { 
+          song: '',
+          artist: '',
+          album: '',
+          albumArt: '',
+          isPlaying: false 
+        }
+      });
+      window.dispatchEvent(spotifyEvent);
+    }
+  }, [discordData?.listening_to_spotify, discordData?.spotify]);
+
   // Fallback to REST API if WebSocket fails
   const fetchDiscordDataREST = async () => {
     try {

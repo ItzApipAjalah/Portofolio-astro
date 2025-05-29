@@ -12,6 +12,128 @@ import SplashScreen from '../components/SplashScreen';
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>My Portfolio</title>
+		<style>
+			.music-controls {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				z-index: 50;
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				padding: 0.75rem;
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 1rem;
+				transition: all 0.3s ease;
+				max-width: calc(100% - 2rem);
+			}
+
+			@media (max-width: 768px) {
+				.music-controls {
+					right: auto;
+					left: 1rem;
+					bottom: 1rem;
+					width: calc(100% - 2rem);
+					max-width: 400px;
+				}
+
+				.music-info {
+					flex: 1;
+					min-width: 0;
+				}
+
+				.music-text {
+					min-width: 0;
+					overflow: hidden;
+				}
+
+				.music-text .song,
+				.music-text .artist {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
+
+			.dark .music-controls {
+				background: rgba(0, 0, 0, 0.2);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+			}
+
+			.music-controls:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+			}
+
+			.music-info {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				flex: 1;
+				min-width: 0;
+			}
+
+			.music-info img {
+				width: 2.5rem;
+				height: 2.5rem;
+				border-radius: 0.5rem;
+				object-fit: cover;
+				flex-shrink: 0;
+			}
+
+			.music-text {
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				min-width: 0;
+				flex: 1;
+			}
+
+			.music-text .song {
+				color: rgb(17, 24, 39);
+				font-weight: 500;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.dark .music-text .song {
+				color: rgb(255, 255, 255);
+			}
+
+			.music-text .artist {
+				color: rgb(107, 114, 128);
+				font-size: 0.75rem;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.dark .music-text .artist {
+				color: rgb(156, 163, 175);
+			}
+
+			.music-controls button {
+				padding: 0.5rem;
+				border-radius: 0.5rem;
+				background: rgba(255, 255, 255, 0.1);
+				transition: all 0.2s ease;
+				flex-shrink: 0;
+			}
+
+			.music-controls button:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
+
+			.dark .music-controls button {
+				background: rgba(255, 255, 255, 0.05);
+			}
+
+			.dark .music-controls button:hover {
+				background: rgba(255, 255, 255, 0.1);
+			}
+		</style>
 	</head>
 
 	<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -20,5 +142,210 @@ import SplashScreen from '../components/SplashScreen';
 		<div class="pt-24 md:pt-32">
 			<HomeContent client:load />
 		</div>
+
+		<!-- Music Controls -->
+		<div id="music-controls" class="music-controls hidden">
+			<div class="music-info">
+				<img id="album-art" src="" alt="Album Art" />
+				<div class="music-text">
+					<div id="song-title" class="song"></div>
+					<div id="artist-name" class="artist"></div>
+				</div>
+			</div>
+			<button id="toggle-music" aria-label="Toggle music">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+				</svg>
+			</button>
+		</div>
+
+		<audio id="background-music" loop>
+			<source src="" type="audio/mpeg">
+		</audio>
+
+		<script>
+			interface SpotifyTrack {
+				song: string;
+				artist: string;
+				album: string;
+				albumArt: string;
+				isPlaying: boolean;
+			}
+
+			let currentTrack: SpotifyTrack | null = null;
+			const musicControls = document.getElementById('music-controls') as HTMLDivElement;
+			const albumArt = document.getElementById('album-art') as HTMLImageElement;
+			const songTitle = document.getElementById('song-title') as HTMLDivElement;
+			const artistName = document.getElementById('artist-name') as HTMLDivElement;
+			const toggleMusic = document.getElementById('toggle-music') as HTMLButtonElement;
+			const backgroundMusic = document.getElementById('background-music') as HTMLAudioElement;
+			let isMusicPlaying = false;
+
+			// Listen for Spotify track changes
+			window.addEventListener('spotify-track-change', ((event: CustomEvent<SpotifyTrack>) => {
+				const { isPlaying, song, artist, albumArt } = event.detail;
+				console.log('Spotify track change event:', event.detail); // Debug log
+				
+				if (isPlaying && song && artist) {
+					console.log('Starting playback for:', { song, artist }); // Debug log
+					currentTrack = event.detail;
+					playTrack(song, artist);
+				} else {
+					console.log('Stopping playback, isPlaying:', isPlaying); // Debug log
+					// Hide the music controls
+					musicControls.style.display = 'none';
+					backgroundMusic.pause();
+					isMusicPlaying = false;
+					currentTrack = null;
+					// Clear the music info
+					const albumArtElement = document.getElementById('album-art') as HTMLImageElement;
+					albumArtElement.src = '';
+					songTitle.textContent = '';
+					artistName.textContent = '';
+				}
+			}) as EventListener);
+
+			// Function to search for and play the track
+			async function playTrack(song: string, artist: string) {
+				try {
+					// Validate inputs
+					if (!song || !artist) {
+						console.error('Missing song or artist:', { song, artist });
+						throw new Error('Song and artist information is required');
+					}
+
+					// Handle multiple artists by taking only the first one
+					const firstArtist = artist.split(';')[0].trim();
+					console.log('Original artist:', artist);
+					console.log('Using first artist:', firstArtist);
+
+					// Show loading state
+					musicControls.style.display = 'flex';
+					albumArt.src = currentTrack?.albumArt || '';
+					songTitle.textContent = song;
+					artistName.textContent = artist;
+					toggleMusic.innerHTML = `
+						<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+					`;
+
+					// Make request to our backend API
+					const searchQuery = song.trim();
+					console.log('Search query before encoding:', searchQuery); // Debug log
+					
+					if (!searchQuery) {
+						throw new Error('Invalid search query');
+					}
+
+					const encodedQuery = encodeURIComponent(searchQuery);
+					console.log('Encoded search query:', encodedQuery); // Debug log
+					
+					const apiUrl = `/api/search-music?q=${encodedQuery}`;
+					console.log('Full API URL:', apiUrl); // Debug log
+
+					const response = await fetch(apiUrl, {
+						method: 'GET',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						}
+					});
+					console.log('Response status:', response.status); // Debug log
+					console.log('Response headers:', Object.fromEntries(response.headers.entries())); // Debug log
+					
+					if (!response.ok) {
+						const errorData = await response.json();
+						console.error('Error response data:', errorData); // Debug log
+						throw new Error(errorData.error || 'Failed to search for track');
+					}
+
+					const data = await response.json();
+					console.log('API Response:', data);
+
+					// Get tracks from the response
+					const tracks = data.data;
+					if (!Array.isArray(tracks) || tracks.length === 0) {
+						throw new Error('No tracks found');
+					}
+
+					// Find exact match or closest match
+					const exactMatch = tracks.find((track) => {
+						const titleMatch = track.title.toLowerCase() === song.toLowerCase();
+						const artistMatch = track.artist.name.toLowerCase() === firstArtist.toLowerCase();
+						console.log('Checking track:', {
+							title: track.title,
+							artist: track.artist.name,
+							titleMatch,
+							artistMatch
+						});
+						return titleMatch && artistMatch;
+					});
+
+					// Use exact match or first result
+					const track = exactMatch || tracks[0];
+					console.log('Selected track:', track);
+					backgroundMusic.src = track.preview;
+					
+					// Show play button
+					toggleMusic.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+						</svg>
+					`;
+					isMusicPlaying = false;
+				} catch (error) {
+					console.error('Error playing track:', error);
+					musicControls.style.display = 'none';
+					backgroundMusic.pause();
+					isMusicPlaying = false;
+					
+					const toast = document.createElement('div');
+					toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+					toast.textContent = error instanceof Error ? error.message : 'Failed to play track';
+					document.body.appendChild(toast);
+					setTimeout(() => toast.remove(), 3000);
+				}
+			}
+
+			// Toggle music playback
+			toggleMusic.addEventListener('click', async () => {
+				if (isMusicPlaying) {
+					backgroundMusic.pause();
+					toggleMusic.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+						</svg>
+					`;
+				} else {
+					try {
+						await backgroundMusic.play();
+						toggleMusic.innerHTML = `
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+								<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+							</svg>
+						`;
+					} catch (error) {
+						console.error('Error playing music:', error);
+						// Show error toast
+						const toast = document.createElement('div');
+						toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+						toast.textContent = 'Click the play button to start playing';
+						document.body.appendChild(toast);
+						setTimeout(() => toast.remove(), 3000);
+					}
+				}
+				isMusicPlaying = !isMusicPlaying;
+			});
+
+			// Handle audio errors
+			backgroundMusic.addEventListener('error', () => {
+				console.error('Error playing audio');
+				musicControls.style.display = 'none';
+				backgroundMusic.pause();
+				isMusicPlaying = false;
+			});
+		</script>
 	</body>
 </html>

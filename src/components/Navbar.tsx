@@ -241,7 +241,7 @@ export default function Navbar() {
         stiffness: 100,
         damping: 10
       }}
-      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 bottom-6 right-6 w-auto z-[100] pointer-events-none"
+      className="fixed md:top-6 md:left-1/2 md:-translate-x-1/2 top-6 right-6 w-auto z-[100] pointer-events-none"
     >
       <div className="flex justify-center items-center gap-2">
         {/* Desktop Navigation */}
@@ -333,7 +333,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-visible pointer-events-auto"
+            className="absolute top-16 right-0 w-56 rounded-2xl bg-gray-50/80 dark:bg-gray-900/80 shadow-xl backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/30 overflow-visible pointer-events-auto"
           >
             {/* Theme Toggle - Mobile */}
             <div className="p-2 border-b border-gray-200/30 dark:border-gray-700/30">
