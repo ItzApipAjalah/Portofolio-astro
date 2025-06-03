@@ -51,16 +51,18 @@ function getClientIP(headers: Headers): string {
     if (value) {
       // x-forwarded-for can be a comma-separated list
       const ips = value.split(',').map(ip => ip.trim());
+      // Get the first valid IP from the list
       for (const ip of ips) {
         if (isValidIP(ip)) {
+          console.log(`[Visitor Tracking] Found valid IP ${ip} in header ${header}`);
           return ip;
         }
       }
     }
   }
 
-  // If no valid IP found, log a warning
-  console.warn('[Visitor Tracking] No valid IP found in headers, falling back to 127.0.0.1', {
+  // If no valid IP found, log a warning and return localhost
+  console.warn('[Visitor Tracking] No valid IP found in headers:', {
     headers: Object.fromEntries([...headers.entries()])
   });
   return '127.0.0.1';
@@ -70,12 +72,7 @@ export async function POST({ request }: { request: Request }) {
   try {
     const ip = getClientIP(request.headers);
 
-    console.log('[Visitor Tracking] Headers:', {
-      ip,
-      headers: Object.fromEntries([...request.headers.entries()])
-    });
-
-    console.log('[Visitor Tracking] Sending request to API with IP:', ip);
+    console.log('[Visitor Tracking] Processing request with IP:', ip);
 
     // Send to your API
     const apiResponse = await fetch('https://portfolio-backend-jade-one.vercel.app/visitors', {
@@ -104,8 +101,6 @@ export async function POST({ request }: { request: Request }) {
       throw new Error('Invalid API response format');
     }
 
-    console.log('[Visitor Tracking] API Parsed Response:', data);
-
     if (!apiResponse.ok) {
       throw new Error(`API responded with status ${apiResponse.status}: ${data.message || responseText}`);
     }
@@ -121,7 +116,10 @@ export async function POST({ request }: { request: Request }) {
     }), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
       }
     });
   } catch (error) {
@@ -136,7 +134,10 @@ export async function POST({ request }: { request: Request }) {
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
       }
     });
   }

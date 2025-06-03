@@ -17,6 +17,9 @@ interface VisitorResponse {
   };
 }
 
+// Flag to control debug display
+const SHOW_DEBUG_INFO = false;
+
 export default function VisitorTracker() {
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
@@ -37,7 +40,8 @@ export default function VisitorTracker() {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-          }
+          },
+          credentials: 'same-origin'
         });
 
         // Log raw response for debugging
@@ -104,7 +108,7 @@ export default function VisitorTracker() {
   }, []); // Run once when component mounts
 
   // Show debug information in development
-  if (process.env.NODE_ENV === 'development' && (error || debugInfo)) {
+  if (SHOW_DEBUG_INFO && process.env.NODE_ENV === 'development' && (error || debugInfo)) {
     return (
       <div className="fixed bottom-4 right-4 max-w-md z-50 p-4 rounded-lg shadow-lg">
         {error ? (
