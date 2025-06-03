@@ -46,7 +46,7 @@ export default function VisitorTracker() {
 
         // Log raw response for debugging
         const responseText = await response.text();
-        console.log('[Visitor Tracking] Raw response:', responseText);
+        // console.log('[Visitor Tracking] Raw response:', responseText);
 
         // Parse the response
         let data;
